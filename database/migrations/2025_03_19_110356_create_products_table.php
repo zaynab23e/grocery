@@ -17,10 +17,11 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->decimal('price', 10, 2); 
+            $table->decimal('discount_price', 10, 2)->nullable(); 
             $table->integer('quantity'); 
             $table->enum('stock_status', ['in_stock', 'out_of_stock'])->default('in_stock');  
             $table->string('image_path')->nullable();
-            $table->decimal('discount_price', 10, 2)->nullable()->after('price');
+            
             $table->timestamps();
         }); 
     }

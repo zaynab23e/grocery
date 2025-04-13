@@ -74,41 +74,84 @@ class DashboardController extends Controller
     }
 
     // تحديث صورة المنتج الرئيسية
-    public function updateProductImage(Request $request, $id)
-    {
-        $request->validate([
-            'product_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+    // public function updateProductImage(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'product_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //     ]);
 
-        $product = Product::findOrFail($id);
+    //     $product = Product::findOrFail($id);
         
-        // حذف الصورة القديمة إذا كانت موجودة
-        if ($product->image_path) {
-            $oldPath = str_replace('storage/', '', $product->image_path);
-            Storage::disk('public')->delete($oldPath);
-        }
+    //     // حذف الصورة القديمة إذا كانت موجودة
+    //     if ($product->image_path) {
+    //         $oldPath = str_replace('storage/', '', $product->image_path);
+    //         Storage::disk('public')->delete($oldPath);
+    //     }
         
-        // حفظ الصورة الجديدة
-        $path = $request->file('product_image')->store('products', 'public');
-        $product->update(['image_path' => 'storage/'.$path]);
+    //     // حفظ الصورة الجديدة
+    //     $path = $request->file('product_image')->store('products', 'public');
+    //     $product->update(['image_path' => 'storage/'.$path]);
         
-        return back()->with('success', 'تم تحديث صورة المنتج بنجاح');
+    //     return back()->with('success', 'تم تحديث صورة المنتج بنجاح');
+    // }
+    
+    // تحديث صورة المنتج الرئيسية
+public function updateProductImage(Request $request, $id)
+{
+    $request->validate([
+        'product_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $product = Product::findOrFail($id);
+    
+    // حذف الصورة القديمة إذا كانت موجودة
+    if ($product->image_path) {
+        $oldPath = $product->image_path;  // هنا المسار سيكون فقط products/apple.jpg
+        Storage::disk('public')->delete($oldPath);
     }
+    
+    // حفظ الصورة الجديدة في مجلد "products"
+    $path = $request->file('product_image')->store('products', 'public');
+    
+    // حفظ المسار في قاعدة البيانات بدون "storage/"
+    $product->update(['image_path' => $path]);  // هنا ستكون المسار products/apple.jpg
+
+    return back()->with('success', 'تم تحديث صورة المنتج بنجاح');
+}
+
+// إضافة صورة إضافية للمنتج
+public function addProductImage(Request $request, $id)
+{
+    $request->validate([
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $product = Product::findOrFail($id);
+    
+    // حفظ الصورة الإضافية في مجلد "product_images"
+    $path = $request->file('image')->store('product_images', 'public');
+    
+    // حفظ المسار في قاعدة البيانات بدون "storage/"
+    $product->images()->create(['image_path' => $path]);  // هنا ستكون المسار product_images/image.jpg
+
+    return back()->with('success', 'تم إضافة الصورة بنجاح');
+}
+
 
     // إضافة صورة إضافية للمنتج
-    public function addProductImage(Request $request, $id)
-    {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+    // public function addProductImage(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    //     ]);
 
-        $product = Product::findOrFail($id);
+    //     $product = Product::findOrFail($id);
         
-        $path = $request->file('image')->store('product_images', 'public');
-        $product->images()->create(['image_path' => 'storage/'.$path]);
+    //     $path = $request->file('image')->store('product_images', 'public');
+    //     $product->images()->create(['image_path' => 'storage/'.$path]);
         
-        return back()->with('success', 'تم إضافة الصورة بنجاح');
-    }
+    //     return back()->with('success', 'تم إضافة الصورة بنجاح');
+    // }
 
     // حذف صورة إضافية للمنتج
     public function deleteProductImage($id)
