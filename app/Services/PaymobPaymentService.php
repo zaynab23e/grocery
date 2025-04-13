@@ -21,7 +21,7 @@ class PaymobPaymentService extends BasePaymentService
             'Content-Type' => 'application/json',
         ];
 
-        $this->integrations_id = [4898304, 4898296];
+        $this->integrations_id = [4900623];
     }
 
     protected function generateToken()

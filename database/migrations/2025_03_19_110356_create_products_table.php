@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('quantity'); 
             $table->enum('stock_status', ['in_stock', 'out_of_stock'])->default('in_stock');  
             $table->string('image_path')->nullable();
+            $table->decimal('discount_price', 10, 2)->nullable()->after('price');
             $table->timestamps();
         }); 
     }
